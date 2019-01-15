@@ -6,6 +6,9 @@ class Gruff::Bar < Gruff::Base
   # Spacing factor applied between bars
   attr_accessor :bar_spacing
 
+  # Spacing factor applied between a group of bars belonging to the same label
+  attr_accessor :label_bar_group_spacing
+
   def initialize(*args)
     super
     @spacing_factor = 0.9
@@ -41,8 +44,10 @@ protected
     #
     # Columns sit side-by-side.
     @bar_spacing ||= @spacing_factor # space between the bars
+    @label_bar_group_spacing ||= 1
     @bar_width = @graph_width / (@column_count * @data.length).to_f
     padding = (@bar_width * (1 - @bar_spacing)) / 2
+    group_padding = (@bar_width * (1 - @label_bar_group_spacing)) / 2
 
     @d = @d.stroke_opacity 0.0
 
@@ -74,8 +79,8 @@ protected
       data_row[DATA_VALUES_INDEX].each_with_index do |data_point, point_index|
         # Use incremented x and scaled y
         # x
-        left_x = @graph_left + (@bar_width * (row_index + point_index + ((@data.length - 1) * point_index))) + padding
-        right_x = left_x + @bar_width * @bar_spacing
+        left_x = @graph_left + (@bar_width * (row_index + point_index + ((@data.length - 1) * point_index)) * @label_bar_group_spacing) + padding + group_padding
+        right_x = left_x + @bar_width * @bar_spacing * @label_bar_group_spacing
         # y
         conv = []
         conversion.get_left_y_right_y_scaled( data_point, conv )
@@ -87,7 +92,7 @@ protected
         # Calculate center based on bar_width and current row
         label_center = @graph_left + 
                       (@data.length * @bar_width * point_index) + 
-                      (@data.length * @bar_width / 2.0)
+                      (@data.length * @bar_width / 2.0) - group_padding
 
         # Subtract half a bar width to center left if requested
         draw_label(label_center - (@center_labels_over_point ? @bar_width / 2.0 : 0.0), point_index)
