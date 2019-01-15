@@ -46,8 +46,9 @@ protected
     @bar_spacing ||= @spacing_factor # space between the bars
     @label_bar_group_spacing ||= 1
     @bar_width = @graph_width / (@column_count * @data.length).to_f
+    @bars_width = @bar_width * @norm_data.size
     padding = (@bar_width * (1 - @bar_spacing)) / 2
-    group_padding = (@bar_width * (1 - @label_bar_group_spacing)) / 2
+    group_padding = (@bar_width * (1 - @label_bar_group_spacing))
 
     @d = @d.stroke_opacity 0.0
 
@@ -79,7 +80,7 @@ protected
       data_row[DATA_VALUES_INDEX].each_with_index do |data_point, point_index|
         # Use incremented x and scaled y
         # x
-        left_x = @graph_left + (@bar_width * (row_index + point_index + ((@data.length - 1) * point_index)) * @label_bar_group_spacing) + padding + group_padding
+        left_x = @graph_left + (@bars_width * point_index) + (@bar_width * row_index * @label_bar_group_spacing) + padding + group_padding
         right_x = left_x + @bar_width * @bar_spacing * @label_bar_group_spacing
         # y
         conv = []
@@ -92,7 +93,7 @@ protected
         # Calculate center based on bar_width and current row
         label_center = @graph_left + 
                       (@data.length * @bar_width * point_index) + 
-                      (@data.length * @bar_width / 2.0) - group_padding
+                      (@data.length * @bar_width / 2.0)
 
         # Subtract half a bar width to center left if requested
         draw_label(label_center - (@center_labels_over_point ? @bar_width / 2.0 : 0.0), point_index)
