@@ -4,9 +4,11 @@ require 'gruff/version'
 
 %w(
   themes
+  axis
   base
-  area
   bar
+  bar_n_line
+  area
   bezier
   bullet
   dot
