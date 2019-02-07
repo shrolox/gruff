@@ -309,11 +309,11 @@ class Gruff::BarNLine < Gruff::Bar
 
     # Draw the last label if requested
     draw_label(@graph_right, @column_count) if @center_labels_over_point
+
+    @d.draw(@base_image)
     labels_to_draw.each do |label|
       draw_value_label(label[0], label[1], label[2], label[3])
     end
-
-    @d.draw(@base_image)
   end
 
   private
