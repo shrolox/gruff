@@ -49,6 +49,7 @@ protected
     @bars_width = @bar_width * @norm_data.size
     padding = (@bar_width * (1 - @bar_spacing)) / 2
     group_padding = (@bar_width * (1 - @label_bar_group_spacing))
+    labels_to_draw = []
 
     @d = @d.stroke_opacity 0.0
 
@@ -99,14 +100,19 @@ protected
         draw_label(label_center - (@center_labels_over_point ? @bar_width / 2.0 : 0.0), point_index)
         if @show_labels_for_bar_values
           val = (@label_formatting || '%.2f') % @norm_data[row_index][3][point_index]
-          draw_value_label(left_x + (right_x - left_x)/2, conv[0]-30, val.commify, true)
+          labels_to_draw.push([left_x + (right_x - left_x)/2, conv[0]-30, val.commify, true])
         end
       end
-
     end
 
     # Draw the last label if requested
     draw_label(@graph_right, @column_count) if @center_labels_over_point
+
+    if @show_labels_for_bar_values
+      labels_to_draw.each do |label|
+        draw_value_label(label[0], label[1], label[2], label[3])
+      end
+    end
 
     @d.draw(@base_image)
   end
