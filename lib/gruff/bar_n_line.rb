@@ -195,6 +195,7 @@ class Gruff::BarNLine < Gruff::Bar
     @bar_width = (@graph_width - col_space) / (@column_count * primary_rows).to_f
     padding = (@bar_width * (1 - @bar_spacing)) / 2
     margin = [col_space / (@column_count - 1), 0].max
+    labels_to_draw = []
 
     @d = @d.stroke_opacity 0.0
 
@@ -251,7 +252,7 @@ class Gruff::BarNLine < Gruff::Bar
         draw_label(label_center - (@center_labels_over_point ? @bar_width / 2.0 : 0.0), point_index)
         if @show_labels_for_bar_values
           val = (@label_formatting || '%.2f') % @norm_data[row_index][3][point_index]
-          draw_value_label(left_x + (right_x - left_x)/2, conv[0]-30, val.commify, true)
+          labels_to_draw.push([left_x + (right_x - left_x)/2, conv[0]-30, val.commify, true])
         end
       end
     end
@@ -308,6 +309,9 @@ class Gruff::BarNLine < Gruff::Bar
 
     # Draw the last label if requested
     draw_label(@graph_right, @column_count) if @center_labels_over_point
+    labels_to_draw.each do |label|
+      draw_value_label(label[0], label[1], label[2], label[3])
+    end
 
     @d.draw(@base_image)
   end

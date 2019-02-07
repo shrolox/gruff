@@ -114,7 +114,6 @@ protected
       end
     end
 
-    puts "NEW V"
     @d.draw(@base_image)
   end
 
