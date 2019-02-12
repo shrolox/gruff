@@ -215,7 +215,7 @@ class Gruff::Line < Gruff::Base
       end
     end
 
-    @norm_data.each do |data_row|
+    @norm_data.each_with_index do |data_row, row_index|
       prev_x = prev_y = nil
 
       @one_point = contains_one_point_only?(data_row)
@@ -258,6 +258,11 @@ class Gruff::Line < Gruff::Base
 
         unless @hide_dots
           @d = DotRenderers.renderer(@dot_style).render(@d, new_x, new_y, circle_radius)
+        end
+
+        if @show_labels_for_line_values
+          val = (@label_formatting || '%.2f') % @norm_data[row_index][DATA_VALUES_LINE_INDEX][index]
+          draw_value_label(new_x, new_y - 40, val.commify, true)
         end
 
         prev_x, prev_y = new_x, new_y

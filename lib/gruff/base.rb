@@ -33,6 +33,7 @@ module Gruff
     DATA_COLOR_INDEX = 2
     DATA_VALUES_X_INDEX = 3
     DATA_ROLE_INDEX = 4
+    DATA_VALUES_LINE_INDEX = 5
 
     # role of the data
     ROLE_PRIMARY = :primary
@@ -213,6 +214,7 @@ module Gruff
     # Output the values for the bars on a bar graph
     # Default is false
     attr_accessor :show_labels_for_bar_values
+    attr_accessor :show_labels_for_line_values
 
     # Set the number output format for labels using sprintf
     # Default is "%.2f"
@@ -296,7 +298,7 @@ module Gruff
 
       @no_data_message = 'No Data'
 
-      @hide_line_markers = @hide_legend = @hide_title = @hide_line_numbers = @legend_at_bottom = @show_labels_for_bar_values = false
+      @hide_line_markers = @hide_legend = @hide_title = @hide_line_numbers = @legend_at_bottom = @show_labels_for_bar_values = @show_labels_for_line_values = false
       @center_labels_over_point = true
       @has_left_labels = false
       @label_stagger_height = 0
@@ -559,6 +561,8 @@ module Gruff
           end
           if @show_labels_for_bar_values
             @norm_data << [data_row[DATA_LABEL_INDEX], norm_data_points, data_row[DATA_COLOR_INDEX], data_row[DATA_VALUES_INDEX], data_row[DATA_ROLE_INDEX]]
+          elsif @show_labels_for_line_values
+            @norm_data << [data_row[DATA_LABEL_INDEX], norm_data_points, data_row[DATA_COLOR_INDEX], nil, data_row[DATA_ROLE_INDEX], data_row[DATA_VALUES_INDEX]]
           else
             @norm_data << [data_row[DATA_LABEL_INDEX], norm_data_points, data_row[DATA_COLOR_INDEX], nil, data_row[DATA_ROLE_INDEX]]
           end
@@ -599,7 +603,7 @@ module Gruff
                                                      labels.values.inject('') { |value, memo| (value.to_s.length > memo.to_s.length) ? value : memo }) * 1.25
         else
           longest_left_label_width = calculate_width(@marker_font_size,
-                                                     label(@maximum_value.to_f, @increment, @marker_format))
+                                                     label(@maximum_value.round.to_f, @increment, @marker_format))
         end
 
         if @right_y_axis.nil?
